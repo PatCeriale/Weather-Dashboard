@@ -8,6 +8,7 @@ h1 {
 }
 
 h3 {
+  background-color: rgb(219, 245, 167);
 }
 
 #search-btn {
@@ -21,4 +22,16 @@ h3 {
 #forecast-container {
   background-color: rgb(134, 240, 93);
   padding-left: 5%;
+}
+
+.city-btn {
+  border: whitesmoke;
+  border-style: solid;
+  border-width: 2px;
+  border-radius: 5%;
+  color: rgb(0, 0, 0);
+  background-color: goldenrod;
+  width: inherit;
+  display: flex;
+  justify-content: left;
 }
