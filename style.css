@@ -1,0 +1,24 @@
+body {
+  background-color: white;
+}
+
+h1 {
+  text-align: center;
+  background-color: rgb(219, 245, 167);
+}
+
+h3 {
+}
+
+#search-btn {
+  background-color: black;
+}
+
+#search-box {
+  background-color: rgb(107, 204, 112);
+}
+
+#forecast-container {
+  background-color: rgb(134, 240, 93);
+  padding-left: 5%;
+}
