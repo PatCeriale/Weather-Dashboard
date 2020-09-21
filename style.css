@@ -9,6 +9,7 @@ h1 {
 
 h3 {
   background-color: rgb(219, 245, 167);
+  margin: 1%;
 }
 
 #search-btn {
@@ -23,6 +24,9 @@ h3 {
   background-color: rgb(134, 240, 93);
   padding-left: 5%;
 }
+.search-results {
+  width: inherit;
+}
 
 .city-btn {
   border: whitesmoke;
@@ -34,4 +38,11 @@ h3 {
   width: inherit;
   display: flex;
   justify-content: left;
+}
+
+#daily-container {
+  border-style: solid;
+  border-width: 2px;
+  border-radius: 5%;
+  border: black;
 }
