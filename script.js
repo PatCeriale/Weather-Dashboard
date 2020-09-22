@@ -2,31 +2,32 @@ let searchBtn = $("#search-btn");
 let searchBox = $("#search-box");
 let searchResults = $(".search-results");
 let apiKey = "b820eac750811c54acc2404d446a5629";
-let cityList = ["Seattle", "Los Angeles", "Paris"];
+let cityList = ["Los Angeles", "Paris", "Seattle"];
 let cityName = "Seattle";
 let dailyForecast = $("#daily-container");
-let fiveDayForcast = $("five-day-container");
+let fiveDayForecast = $("#five-day-container");
 
-//API call api.openweathermap.org/data/2.5/forecast?q={city name}&appid={b820eac750811c54acc2404d446a5629}
-// let queryURL: "https://api.openweathermap.org/data/2.5/forecast?q={cityName}&appid={apiKey}";
+TODO: localStorage.getItem("city", cityList);
 
 function displayWeather() {
+  // Daily Forecast
+  dailyForecast.empty();
+  fiveDayForecast.empty();
   let city = $(this).attr("data-name");
   let queryURL = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}`;
-  // City Name (Date) *cloud icon
-  //Temperature: in F
-  //Humidity: 41%
-  //Wind Speed: 4.7 MPH
-  //UV index: 9.49 in red box.....
+  let queryURLFiveDay = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}`;
   $.ajax({
     url: queryURL,
     method: "GET",
   }).then(function (response) {
     console.log(response); // TODO: remove console.log
-    let title = $("<h4>").text(response.name);
+    // Append with styling
+    let title = $("<h4>").text(
+      `${response.name} - ${moment().format("MMM Do YY")}`
+    );
     dailyForecast.append(title);
-    var tempF = (response.main.temp - 273.15) * 1.8 + 32; //Convert to degrees F
-    let temp = $("<p>").text(`Temperature: ${tempF} °F`);
+    var tempF = (response.main.temp - 273.15) * 1.8 + 32;
+    let temp = $("<p>").text(`Temperature: ${tempF.toFixed(1)} °F`);
     dailyForecast.append(temp);
     let humidity = $("<p>").text(`Humidity: ${response.main.humidity}%`);
     dailyForecast.append(humidity);
@@ -37,15 +38,27 @@ function displayWeather() {
     //uvIndex.addClass("uvIndex")
     // dailyForecast.append(uvIndex);
   });
+  // Five Day Forecast
+  $.ajax({
+    url: queryURLFiveDay,
+    method: "GET",
+  }).then(function (response) {
+    console.log(response); // TODO: remove console.log
+    //8, 16, 24, 32, 40
+
+    let title = $("<h4>").text(`${response.list[0].dt_txt}`);
+    fiveDayForecast.append(title);
+    let tempF = (response.list[0].main.temp - 273.15) * 1.8 + 32;
+    let temp = $("<p>").text(`Temperature: ${tempF.toFixed(1)} °F`);
+    fiveDayForecast.append(temp);
+    let humidity = $("<p>").text(
+      `Humidity: ${response.list[0].main.humidity}%`
+    );
+    fiveDayForecast.append(humidity);
+    let icon = $("<p>").text(`${response.list[0].weather[0].icon}%`);
+    fiveDayForecast.append(icon);
+  });
 }
-//   $.ajax({
-//     url: queryURL,
-//     method: "GET",
-//   }).then(function (response) {
-//     $("#search-box").append(`<button class = "city-btn">${response.name}`);
-//     console.log(response); // TODO: remove console.log
-//   });
-// }
 // TODO: create cityList array that adds a button to the searchBox after the user submits
 //Renders the city list buttons in the Search box
 function renderCityBtn() {
@@ -69,9 +82,11 @@ $("#search-btn").on("click", function (event) {
     // TODO: Stops function and doesn't add an empty box
     return 0;
   }
+  displayWeather();
   renderCityBtn();
 });
 
-//CLick event listener toa ll elements with class of "city-btn"
-$(document).on("click", "city-btn", displayWeather);
+//CLick event listener to all elements with class of "city-btn"
+$(document).on("click", ".city-btn", displayWeather);
 renderCityBtn();
+// displayWeather();

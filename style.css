@@ -32,7 +32,7 @@ h3 {
   border: whitesmoke;
   border-style: solid;
   border-width: 2px;
-  border-radius: 5%;
+  border-radius: 2%;
   color: rgb(0, 0, 0);
   background-color: goldenrod;
   width: inherit;
@@ -40,9 +40,12 @@ h3 {
   justify-content: left;
 }
 
-#daily-container {
+#daily-container,
+#five-day-container {
   border-style: solid;
   border-width: 2px;
   border-radius: 5%;
   border: black;
+  display: flex;
+  justify-content: left;
 }
