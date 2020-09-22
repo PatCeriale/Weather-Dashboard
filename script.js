@@ -7,7 +7,7 @@ let cityName = "Seattle";
 let dailyForecast = $("#daily-container");
 let fiveDayForecast = $("#five-day-container");
 
-TODO: localStorage.getItem("city", cityList);
+TODO: searchBox.val(localStorage.getItem("city"));
 
 function displayWeather() {
   // Daily Forecast
@@ -44,19 +44,29 @@ function displayWeather() {
     method: "GET",
   }).then(function (response) {
     console.log(response); // TODO: remove console.log
-    //8, 16, 24, 32, 40
+    let fiveDaysArray = [0, 8, 16, 24, 32];
+    //Loop to create 5 days
+    for (let i = 0; i < fiveDaysArray.length; i++) {
+      //  TODO: create new div for each day to be placed into
+      // let newBox = $("<div class='new-box'>")
+      //
+      // let fiveDayBlock = fiveDayForecast.append(newBox);
 
-    let title = $("<h4>").text(`${response.list[0].dt_txt}`);
-    fiveDayForecast.append(title);
-    let tempF = (response.list[0].main.temp - 273.15) * 1.8 + 32;
-    let temp = $("<p>").text(`Temperature: ${tempF.toFixed(1)} °F`);
-    fiveDayForecast.append(temp);
-    let humidity = $("<p>").text(
-      `Humidity: ${response.list[0].main.humidity}%`
-    );
-    fiveDayForecast.append(humidity);
-    let icon = $("<p>").text(`${response.list[0].weather[0].icon}%`);
-    fiveDayForecast.append(icon);
+      let title = $("<p>").text(`${response.list[fiveDaysArray[i]].dt_txt}`);
+      fiveDayForecast.append(title);
+      let tempF =
+        (response.list[fiveDaysArray[i]].main.temp - 273.15) * 1.8 + 32;
+      let temp = $("<p>").text(`Temperature: ${tempF.toFixed(1)} °F`);
+      fiveDayForecast.append(temp);
+      let humidity = $("<p>").text(
+        `Humidity: ${response.list[fiveDaysArray[i]].main.humidity}%`
+      );
+      fiveDayForecast.append(humidity);
+      let icon = $("<p>").text(
+        `${response.list[fiveDaysArray[i]].weather[0].icon}%`
+      );
+      fiveDayForecast.append(icon);
+    }
   });
 }
 // TODO: create cityList array that adds a button to the searchBox after the user submits
@@ -82,6 +92,8 @@ $("#search-btn").on("click", function (event) {
     // TODO: Stops function and doesn't add an empty box
     return 0;
   }
+  // Save added city to "cityList"
+  localStorage.setItem("city", JSON.stringify(cityList));
   displayWeather();
   renderCityBtn();
 });
