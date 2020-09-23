@@ -7,7 +7,7 @@ let cityName = "Seattle";
 let dailyForecast = $("#daily-container");
 let fiveDayForecast = $("#five-day-container");
 
-TODO: searchBox.val(localStorage.getItem("city"));
+searchBox.val(localStorage.getItem("city"));
 
 function displayWeather(city) {
   // Daily Forecast
@@ -19,8 +19,6 @@ function displayWeather(city) {
     url: queryURL,
     method: "GET",
   }).then(function (response) {
-    console.log(response); // TODO: remove console.log
-    console.log(response.weather[0].icon); // TODO: remove console.log
     cityList.unshift(response.name);
     cityList = new Array(...new Set(cityList));
     // Save added city to "cityList"
@@ -32,14 +30,9 @@ function displayWeather(city) {
       `${response.name} - ${moment().format("MMM Do YY")}`
     );
     dailyForecast.append(title);
-    ////////////////////////////////////////////
-    let wIcon = $("<img>").attr(
-      "src",
-      `http://openweathermap.org/img/w/
-        ${response.weather[0].icon}.png`
-    );
+    let ImgUrl = `http://openweathermap.org/img/w/${response.weather[0].icon}.png`;
+    let wIcon = $("<img>").attr("src", ImgUrl);
     dailyForecast.append(wIcon);
-    /////////////////////////////////////////
     var tempF = (response.main.temp - 273.15) * 1.8 + 32;
     let temp = $("<p>").text(`Temperature: ${tempF.toFixed(1)} °F`);
     dailyForecast.append(temp);
@@ -47,10 +40,6 @@ function displayWeather(city) {
     dailyForecast.append(humidity);
     let windSpeed = $("<p>").text(`Wind Speed: ${response.wind.speed} MPH`);
     dailyForecast.append(windSpeed);
-    // TODO: Find UV index
-    //let uvIndex = $("<p>").text(response.main.temp);
-    //uvIndex.addClass("uvIndex")
-    // dailyForecast.append(uvIndex);
   });
   // Five Day Forecast
   $.ajax({
