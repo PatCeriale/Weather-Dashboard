@@ -2,18 +2,17 @@ let searchBtn = $("#search-btn");
 let searchBox = $("#search-box");
 let searchResults = $(".search-results");
 let apiKey = "b820eac750811c54acc2404d446a5629";
-let cityList = ["Los Angeles", "Paris", "Seattle"];
+let cityList = JSON.parse(localStorage.getItem("city")) || [];
 let cityName = "Seattle";
 let dailyForecast = $("#daily-container");
 let fiveDayForecast = $("#five-day-container");
 
 TODO: searchBox.val(localStorage.getItem("city"));
 
-function displayWeather() {
+function displayWeather(city) {
   // Daily Forecast
   dailyForecast.empty();
   fiveDayForecast.empty();
-  let city = $(this).attr("data-name");
   let queryURL = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}`;
   let queryURLFiveDay = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}`;
   $.ajax({
@@ -21,11 +20,26 @@ function displayWeather() {
     method: "GET",
   }).then(function (response) {
     console.log(response); // TODO: remove console.log
+    console.log(response.weather[0].icon); // TODO: remove console.log
+    cityList.unshift(response.name);
+    cityList = new Array(...new Set(cityList));
+    // Save added city to "cityList"
+    localStorage.setItem("city", JSON.stringify(cityList));
+    renderCityBtn();
+
     // Append with styling
     let title = $("<h4>").text(
       `${response.name} - ${moment().format("MMM Do YY")}`
     );
     dailyForecast.append(title);
+    ////////////////////////////////////////////
+    let wIcon = $("<img>").attr(
+      "src",
+      `http://openweathermap.org/img/w/
+        ${response.weather[0].icon}.png`
+    );
+    dailyForecast.append(wIcon);
+    /////////////////////////////////////////
     var tempF = (response.main.temp - 273.15) * 1.8 + 32;
     let temp = $("<p>").text(`Temperature: ${tempF.toFixed(1)} °F`);
     dailyForecast.append(temp);
@@ -43,33 +57,33 @@ function displayWeather() {
     url: queryURLFiveDay,
     method: "GET",
   }).then(function (response) {
-    console.log(response); // TODO: remove console.log
     let fiveDaysArray = [0, 8, 16, 24, 32];
     //Loop to create 5 days
     for (let i = 0; i < fiveDaysArray.length; i++) {
-      //  TODO: create new div for each day to be placed into
-      // let newBox = $("<div class='new-box'>")
-      //
-      // let fiveDayBlock = fiveDayForecast.append(newBox);
-
+      //  Create new div for each day to be placed into
+      let newBox = $("<div class='new-box'>");
+      let fiveDayBlock = fiveDayForecast.append(newBox);
+      //  Create daily content x5
       let title = $("<p>").text(`${response.list[fiveDaysArray[i]].dt_txt}`);
-      fiveDayForecast.append(title);
+      newBox.append(title);
       let tempF =
         (response.list[fiveDaysArray[i]].main.temp - 273.15) * 1.8 + 32;
       let temp = $("<p>").text(`Temperature: ${tempF.toFixed(1)} °F`);
-      fiveDayForecast.append(temp);
+      newBox.append(temp);
       let humidity = $("<p>").text(
         `Humidity: ${response.list[fiveDaysArray[i]].main.humidity}%`
       );
-      fiveDayForecast.append(humidity);
-      let icon = $("<p>").text(
-        `${response.list[fiveDaysArray[i]].weather[0].icon}%`
+      newBox.append(humidity);
+      let icon = $("<img>").attr(
+        "src",
+        `http://openweathermap.org/img/wn/${
+          response.list[fiveDaysArray[i]].weather[0].icon
+        }.png`
       );
-      fiveDayForecast.append(icon);
+      newBox.append(icon);
     }
   });
 }
-// TODO: create cityList array that adds a button to the searchBox after the user submits
 //Renders the city list buttons in the Search box
 function renderCityBtn() {
   searchResults.empty();
@@ -78,27 +92,29 @@ function renderCityBtn() {
     createBtn.addClass("city-btn");
     createBtn.attr("data-name", cityList[i]);
     createBtn.text(cityList[i]);
-    searchResults.prepend(createBtn);
+    searchResults.append(createBtn);
   }
 }
 
-// TODO: Creates new city button
+// Creates new city button
 $("#search-btn").on("click", function (event) {
   event.preventDefault();
   // Grab text from input box and add to cityList array
   let city = $("#city-input").val().trim();
-  cityList.push(city);
-  if ((city = "")) {
-    // TODO: Stops function and doesn't add an empty box
-    return 0;
+  if (city === "") {
+    // Stops function and doesn't add an empty box
+    return;
   }
-  // Save added city to "cityList"
-  localStorage.setItem("city", JSON.stringify(cityList));
-  displayWeather();
-  renderCityBtn();
+  displayWeather(city);
 });
 
-//CLick event listener to all elements with class of "city-btn"
-$(document).on("click", ".city-btn", displayWeather);
+//CLick event listener that displays the newly searched city or one clicked from the list
+$(document).on("click", ".city-btn", function () {
+  let city = $(this).attr("data-name");
+  displayWeather(city);
+});
+
 renderCityBtn();
-// displayWeather();
+if (cityList.length) {
+  displayWeather(cityList[0]);
+}

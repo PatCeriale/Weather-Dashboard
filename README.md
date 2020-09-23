@@ -14,7 +14,7 @@
 
 **Future Development**
 
->
+> Future versions of this application could be outfitted with a search bar that data-mines for suggested search queries, limiting the number of misspelled results.
 
 **Link to Deployed Website**
 
